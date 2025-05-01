@@ -19,7 +19,7 @@ class PythonInspector(Inspector):
             return True
         except (ImportError, ModuleNotFoundError):
             parts = target.split(".")
-            
+
             # Try to import as a class or function within a module
             if len(parts) > 1:
                 module_name = ".".join(parts[:-1])
@@ -35,7 +35,7 @@ class PythonInspector(Inspector):
                             return True
                         except (ImportError, ModuleNotFoundError):
                             pass
-            
+
             return False
 
     def inspect(self, target_name: str) -> InspectionResult:
@@ -47,17 +47,17 @@ class PythonInspector(Inspector):
         except (ImportError, ModuleNotFoundError):
             # If that fails, try to handle it as a class, method, or function
             parts = target_name.split(".")
-            
+
             # Check if it's a class or function directly in a module
             if len(parts) > 1:
                 # First, try as a direct attribute of a module
                 module_name = ".".join(parts[:-1])
                 item_name = parts[-1]
-                
+
                 try:
                     module = importlib.import_module(module_name)
                     item = getattr(module, item_name)
-                    
+
                     # Handle different types of objects
                     if inspect.isclass(item):
                         return self._inspect_class_as_root(item, target_name)
@@ -67,9 +67,9 @@ class PythonInspector(Inspector):
                         # For other types, return basic information
                         doc = inspect.getdoc(item) or ""
                         return InspectionResult(
-                            name=target_name, 
-                            type=type(item).__name__, 
-                            elements=[Module(name=target_name, docstring=doc)]
+                            name=target_name,
+                            type=type(item).__name__,
+                            elements=[Module(name=target_name, docstring=doc)],
                         )
                 except (ImportError, AttributeError):
                     # If that fails, but we have at least 3 parts, it might be a class method
@@ -79,17 +79,21 @@ class PythonInspector(Inspector):
                             class_module_name = ".".join(parts[:-2])
                             class_name = parts[-2]
                             method_name = parts[-1]
-                            
+
                             module = importlib.import_module(class_module_name)
                             class_obj = getattr(module, class_name)
-                            
+
                             if inspect.isclass(class_obj):
                                 method = getattr(class_obj, method_name)
-                                return self._inspect_function_as_root(method, target_name)
+                                return self._inspect_function_as_root(
+                                    method, target_name
+                                )
                         except (ImportError, AttributeError):
                             pass
 
-        raise ValueError(f"Could not import {target_name} as a Python module, class, function, or method")
+        raise ValueError(
+            f"Could not import {target_name} as a Python module, class, function, or method"
+        )
 
     def _inspect_module(self, module_obj) -> InspectionResult:
         """Inspect a Python module."""
@@ -98,7 +102,7 @@ class PythonInspector(Inspector):
 
         # Create a Module object
         module = Module(name=module_name, docstring=module_doc)
-        
+
         # Identify if this is a package with submodules
         if hasattr(module_obj, "__path__"):  # It's a package
             pkg_path = module_obj.__path__
@@ -109,23 +113,23 @@ class PythonInspector(Inspector):
         # Find all classes in the module
         for name, obj in inspect.getmembers(module_obj, inspect.isclass):
             class_info = self._inspect_class(obj)
-            
+
             # Check if class is imported or defined in this module
             if obj.__module__ != module_name:
                 class_info.is_imported = True
                 class_info.import_source = obj.__module__
-                
+
             module.classes.append(class_info)
 
         # Find all functions in the module
         for name, obj in inspect.getmembers(module_obj, inspect.isfunction):
             function_info = self._inspect_function(obj)
-            
+
             # Check if function is imported or defined in this module
             if obj.__module__ != module_name:
                 function_info.is_imported = True
                 function_info.import_source = obj.__module__
-                
+
             module.functions.append(function_info)
 
         # Create and return the inspection result
@@ -137,13 +141,15 @@ class PythonInspector(Inspector):
 
         # Create and return the inspection result
         return InspectionResult(name=full_name, type="class", elements=[class_info])
-        
+
     def _inspect_function_as_root(self, func_obj, full_name: str) -> InspectionResult:
         """Inspect a function or method as the root element."""
         function_info = self._inspect_function(func_obj)
-        
+
         # Create and return the inspection result
-        return InspectionResult(name=full_name, type="function", elements=[function_info])
+        return InspectionResult(
+            name=full_name, type="function", elements=[function_info]
+        )
 
     def _inspect_class(self, class_obj) -> Class:
         """Inspect a Python class."""

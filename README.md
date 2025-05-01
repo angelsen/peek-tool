@@ -74,11 +74,21 @@ The MCP server exposes:
 
 1. `inspect_module` tool: Lets the LLM inspect any Python module
 2. Help resources explaining how to use peek
+3. `inspect` prompt template: Creates a prompt to inspect a specific module, class, or function
 
 To connect:
-1. Start the peek-mcp server
+1. Start the peek-mcp server: `peek-mcp`
 2. Add it as a connection in Claude Desktop or any MCP client
 3. The LLM can now use peek to inspect Python modules
+
+Advanced options:
+```bash
+# Run with a custom name
+peek-mcp --name "My Peek Server"
+
+# Run with SSE transport for web applications
+peek-mcp --transport sse
+```
 
 ## Project Structure
 
@@ -96,8 +106,13 @@ peek-tool/
 │       ├── models/            # Data models
 │       │   ├── api_element.py # Models for API elements
 │       │   └── inspection_result.py # Inspection results
-│       ├── cli.py             # Command-line interface
-│       └── mcp_server.py      # MCP server implementation
+│       ├── mcp_server/        # MCP server package
+│       │   ├── __init__.py    # Package marker
+│       │   ├── __main__.py    # Entry point
+│       │   ├── tools.py       # MCP tools
+│       │   ├── resources.py   # MCP resources
+│       │   └── prompts.py     # MCP prompts
+│       └── cli.py             # Command-line interface
 ├── tests/                     # Test suite (coming soon)
 └── README.md
 ```

@@ -13,7 +13,7 @@ dependencies = [
 
 [project.scripts]
 peek = "peek_tool.cli:app"
-peek-mcp = "peek_tool.mcp_server:main"
+peek-mcp = "peek_tool.mcp_server.__main__:main"
 
 [build-system]
 requires = ["hatchling"]

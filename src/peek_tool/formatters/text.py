@@ -7,10 +7,10 @@ from peek_tool.models.api_element import Module, Class, Method, Parameter
 
 class TextFormatter(Formatter):
     """Simple text formatter for inspection results."""
-    
+
     # Max number of lines to show for docstrings at top level
     MAX_DOCSTRING_LINES = 8
-    
+
     # Max number of lines to show for function/method details
     MAX_FUNCTION_DOCSTRING_LINES = 15
 
@@ -33,27 +33,29 @@ class TextFormatter(Formatter):
                 self._format_method(element, output, indent=0)
 
         return "\n".join(output)
-    
+
     def _truncate_docstring(self, docstring: str, max_lines: int) -> str:
         """Truncate a docstring to a maximum number of lines."""
         if not docstring:
             return ""
-            
-        lines = docstring.split('\n')
+
+        lines = docstring.split("\n")
         if len(lines) <= max_lines:
             return docstring
-            
-        truncated = '\n'.join(lines[:max_lines])
+
+        truncated = "\n".join(lines[:max_lines])
         return f"{truncated}\n\n[...docstring truncated...]"
 
     def _format_module(self, module: Module, output: List[str]) -> None:
         """Format a module to text."""
         # Module docstring (truncated)
         if module.docstring:
-            truncated_doc = self._truncate_docstring(module.docstring, self.MAX_DOCSTRING_LINES)
+            truncated_doc = self._truncate_docstring(
+                module.docstring, self.MAX_DOCSTRING_LINES
+            )
             output.append(f"Description: {truncated_doc}")
             output.append("")
-            
+
         # Show submodules if present
         if module.submodules:
             output.append("Submodules:")
@@ -92,7 +94,7 @@ class TextFormatter(Formatter):
                     signature += f" -> {function.return_type}"
                 output.append(signature)
             output.append("")
-            
+
         # Group imported classes by source module
         imported_classes = {}
         for class_obj in module.classes:
@@ -101,7 +103,7 @@ class TextFormatter(Formatter):
                 if source not in imported_classes:
                     imported_classes[source] = []
                 imported_classes[source].append(class_obj.name)
-                
+
         # Group imported functions by source module
         imported_functions = {}
         for function in module.functions:
@@ -110,7 +112,7 @@ class TextFormatter(Formatter):
                 if source not in imported_functions:
                     imported_functions[source] = []
                 imported_functions[source].append(function.name)
-        
+
         # Show imported classes
         if imported_classes:
             output.append("Imported Classes:")
@@ -118,7 +120,7 @@ class TextFormatter(Formatter):
                 output.append(f"  From {source}:")
                 output.append("    " + ", ".join(sorted(names)))
             output.append("")
-            
+
         # Show imported functions
         if imported_functions:
             output.append("Imported Functions:")
@@ -136,17 +138,21 @@ class TextFormatter(Formatter):
         if class_obj.base_classes:
             base_classes_str = ", ".join(class_obj.base_classes)
             class_decl += f"({base_classes_str})"
-        
+
         # Add import information if relevant
         if class_obj.is_imported and class_obj.import_source:
             class_decl += f" [imported from {class_obj.import_source}]"
-            
+
         output.append(class_decl)
 
         # Class docstring (truncated if at module level)
         if class_obj.docstring:
             # If showing class directly (indent=0), show more of the docstring
-            max_lines = self.MAX_FUNCTION_DOCSTRING_LINES if indent == 0 else self.MAX_DOCSTRING_LINES
+            max_lines = (
+                self.MAX_FUNCTION_DOCSTRING_LINES
+                if indent == 0
+                else self.MAX_DOCSTRING_LINES
+            )
             truncated_doc = self._truncate_docstring(class_obj.docstring, max_lines)
             output.append(f"{indentation}  Description: {truncated_doc}")
 
@@ -155,21 +161,21 @@ class TextFormatter(Formatter):
             output.append(f"{indentation}  Methods:")
             for method in class_obj.methods:
                 method_indentation = " " * (indent + 4)
-                
+
                 # Format method signature with parameters
                 params_str = ", ".join(
                     self._format_parameter(param) for param in method.parameters
                 )
                 method_sig = f"def {method.name}({params_str})"
-                
+
                 # Add return type if available
                 if method.return_type:
                     method_sig += f" -> {method.return_type}"
-                    
+
                 # Add import information if relevant
                 if method.is_imported and method.import_source:
                     method_sig += f" [imported from {method.import_source}]"
-                    
+
                 output.append(f"{method_indentation}{method_sig}")
 
         output.append("")  # Add an empty line after the class
@@ -187,7 +193,7 @@ class TextFormatter(Formatter):
         # Add return type if available
         if method.return_type:
             signature += f" -> {method.return_type}"
-            
+
         # Add import information if relevant
         if method.is_imported and method.import_source:
             signature += f" [imported from {method.import_source}]"

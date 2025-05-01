@@ -21,7 +21,7 @@ class Method:
     return_type: Optional[str] = None
     docstring: Optional[str] = None
     decorators: List[str] = field(default_factory=list)
-    
+
     # Import information
     is_imported: bool = False
     import_source: Optional[str] = None
@@ -35,7 +35,7 @@ class Class:
     methods: List[Method] = field(default_factory=list)
     base_classes: List[str] = field(default_factory=list)
     docstring: Optional[str] = None
-    
+
     # Import information
     is_imported: bool = False
     import_source: Optional[str] = None
@@ -49,6 +49,6 @@ class Module:
     classes: List[Class] = field(default_factory=list)
     functions: List[Method] = field(default_factory=list)
     docstring: Optional[str] = None
-    
+
     # Additional structure
     submodules: List[str] = field(default_factory=list)
