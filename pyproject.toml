@@ -1,0 +1,24 @@
+[project]
+name = "peek-tool"
+version = "0.1.0"
+description = "A powerful Python module inspection and API discovery tool"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Fredrik Angelsen", email = "fredrikangelsen@gmail.com" }]
+
+[project.scripts]
+peek = "peek_tool.cli:app"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "peek-tool",
+    "ruff>=0.11.7",
+]
+
+[tool.uv.sources]
+peek-tool = { workspace = true }

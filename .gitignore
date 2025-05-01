@@ -1,0 +1,22 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Ruff-generated files
+.ruff_cache/
+
+# Claude-generated files
+.claude/
+CLAUDE.md
+
+# Virtual environments
+.venv
+
+# Resources
+resources/
+
+# Local config
