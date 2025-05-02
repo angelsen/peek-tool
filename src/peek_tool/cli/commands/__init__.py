@@ -1,1 +1,1 @@
-"""Command modules for the peek CLI."""
+"""Command modules for the peek-tool CLI."""
