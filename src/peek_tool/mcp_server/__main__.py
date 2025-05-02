@@ -14,12 +14,16 @@ from peek_tool.mcp_server.prompts import register_prompts
 
 
 def create_server(
-    name: str = "Peek MCP Server",
-    instructions: str = "Inspect Python modules and their structure.",
+    name: str = "Peek",
+    instructions: str = "Inspect Python modules, classes, methods, functions, and JSON files to understand their structure.",
 ) -> FastMCP:
     """Create and configure a FastMCP server for peek-tool."""
-    # Create the server instance
-    app = FastMCP(name=name, instructions=instructions)
+    # Create the server instance with concise name and clear description
+    app = FastMCP(
+        name=name,
+        instructions=instructions,
+        description="Inspect and explore code and data structures",
+    )
 
     # Register components
     register_tools(app)
@@ -35,8 +39,8 @@ def parse_args(args: Optional[List[str]] = None) -> argparse.Namespace:
 
     parser.add_argument(
         "--name",
-        default="Peek MCP Server",
-        help="The name of the server (default: 'Peek MCP Server')",
+        default="Peek",
+        help="The name of the server (default: 'Peek')",
     )
 
     parser.add_argument(

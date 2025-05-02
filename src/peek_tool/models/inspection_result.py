@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from typing import List, Dict, Any, Union
-from peek_tool.models.api_element import Module, Class, Method
+from peek_tool.models.python_element import Module, Class, Method
 
 
 @dataclass

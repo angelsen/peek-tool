@@ -10,14 +10,14 @@ def register_prompts(app: FastMCP) -> None:
     """Register all peek prompts with the FastMCP server."""
 
     @app.prompt(
-        name="inspect", description="Inspect a Python module, class, or function"
+        name="inspect", description="Inspect a Python module, class, function, or JSON file"
     )
     def module_inspect_prompt(target: str, target_type: str = "module") -> str:
         """
-        Create a prompt to inspect a Python module, class or function.
+        Create a prompt to inspect a Python module, class, function, or JSON file.
 
         Args:
-            target: The name of the module, class, or function to inspect
-            target_type: Type of target (module, class, function, method)
+            target: The name of the module, class, function, or path to JSON file to inspect
+            target_type: Type of target (module, class, function, method, json)
         """
         return f"Please inspect the Python {target_type} named '{target}' and explain its key functionality, parameters, and usage patterns."

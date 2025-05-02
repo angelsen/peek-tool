@@ -1,50 +1,12 @@
 from typing import List
 
-from peek_tool.formatters.base import Formatter, FormatterFactory
-from peek_tool.models.inspection_result import InspectionResult
-from peek_tool.models.api_element import Module, Class, Method, Parameter
+from peek_tool.formatters.python.base import PythonFormatter
+from peek_tool.formatters.base import FormatterFactory
+from peek_tool.models.python_element import Module, Class, Method
 
 
-class TextFormatter(Formatter):
-    """Simple text formatter for inspection results."""
-
-    # Max number of lines to show for docstrings at top level
-    MAX_DOCSTRING_LINES = 8
-
-    # Max number of lines to show for function/method details
-    MAX_FUNCTION_DOCSTRING_LINES = 15
-
-    def format(self, result: InspectionResult) -> str:
-        """Format inspection results as plain text."""
-        output = []
-
-        # Header with the name and type
-        output.append(f"{result.name} ({result.type})")
-        output.append("=" * len(output[0]))
-        output.append("")
-
-        # Format each element
-        for element in result.elements:
-            if isinstance(element, Module):
-                self._format_module(element, output)
-            elif isinstance(element, Class):
-                self._format_class(element, output, indent=0)
-            elif isinstance(element, Method):
-                self._format_method(element, output, indent=0)
-
-        return "\n".join(output)
-
-    def _truncate_docstring(self, docstring: str, max_lines: int) -> str:
-        """Truncate a docstring to a maximum number of lines."""
-        if not docstring:
-            return ""
-
-        lines = docstring.split("\n")
-        if len(lines) <= max_lines:
-            return docstring
-
-        truncated = "\n".join(lines[:max_lines])
-        return f"{truncated}\n\n[...docstring truncated...]"
+class TextFormatter(PythonFormatter):
+    """Plain text formatter for Python inspection results."""
 
     def _format_module(self, module: Module, output: List[str]) -> None:
         """Format a module to text."""
@@ -208,20 +170,6 @@ class TextFormatter(Formatter):
             output.append(f"{indentation}  Description: {truncated_doc}")
 
         output.append("")  # Add an empty line after the method
-
-    def _format_parameter(self, param: Parameter) -> str:
-        """Format a parameter to a string for inclusion in a method signature."""
-        result = param.name
-
-        # Add type annotation if available
-        if param.type_annotation:
-            result += f": {param.type_annotation}"
-
-        # Add default value if available
-        if param.default_value:
-            result += f" = {param.default_value}"
-
-        return result
 
 
 # Register the formatter

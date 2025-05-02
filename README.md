@@ -1,103 +1,173 @@
-# Peek
+<div align="center">
+  <h1>Peek</h1>
+  <p>🔍 Python module inspection and API discovery tool</p>
+  
+  [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+</div>
 
-A powerful Python module inspection and API discovery tool.
+---
 
-## Overview
+## ✨ Why Peek?
 
-Peek is a command-line tool and library for inspecting Python modules and their APIs. It extracts class and method information, type annotations, and docstrings to help developers understand Python libraries quickly and efficiently.
+Navigating complex Python libraries shouldn't be painful. **Peek** is a developer tool for API discovery that helps you:
 
-## Features
+- **Understand Python modules quickly** through structured inspection
+- **Explore APIs efficiently** with hierarchical navigation
+- **Extract method signatures** with complete type annotations
+- **Integrate with LLMs** through MCP server capabilities
 
-- **Complete Module Inspection**: Extract class, method, and function details from any installed Python module
-- **Hierarchical Navigation**: Navigate from modules to classes to methods (e.g., `peek module.Class.method`)
-- **Type Information**: Display parameter and return types from type annotations
-- **Smart Import Handling**: Clearly identifies imported vs. locally defined items
-- **Docstring Management**: Intelligently truncates docstrings for readability
-- **Contextual Display**: Shows appropriate detail level based on current view
-- **Multiple Output Formats**: Generate various output formats (currently text, more to come)
-- **MCP Server Integration**: Expose peek functionality via the Model Context Protocol for LLM agents
+## 🚀 Quick Start
 
-## Installation
+```bash
+# Install as a development dependency with uv
+uv add --dev git+https://github.com/angelsen/peek-tool.git
+
+# Start exploring any Python module
+uv run peek requests
+```
+
+Connect with your favorite AI tools:
+- 🤖 [Claude Desktop integration](#with-claude-desktop)
+- 💻 [Claude Code integration](#with-claude-code)  
+- 🖱️ [Cursor integration](#with-cursor)
+
+<div align="center">  
+  <div id="demo-animation">
+    <img src="docs/assets/peek-demo.gif" alt="Peek Demo" width="700" />
+  </div>
+</div>
+
+## 🌟 Key Features
+
+- **Comprehensive API Discovery** - Quickly explore and understand any Python module, class, or method
+- **Type-Aware Analysis** - View detailed parameter and return types from annotations
+- **JSON Navigation** - Parse and traverse complex JSON structures with path-based queries
+- **LLM Integration** - Supercharge AI assistants with Python introspection capabilities
+- **Developer-Friendly** - Clean, concise output tailored to your current context
+
+## 🔧 Usage Examples
+
+### Command Line
+
+```bash
+# Inspect a Python module
+uv run peek json
+
+# Inspect a specific class
+uv run peek json.JSONEncoder
+
+# Inspect a specific method
+uv run peek json.JSONEncoder.encode
+
+# Inspect a JSON file
+uv run peek path/to/your/file.json
+
+# Inspect a specific element in a JSON file
+uv run peek path/to/your/file.json:path.to.element
+```
+
+## 📦 Installation
+
+### From GitHub
+
+```bash
+# Install as a development dependency
+uv add --dev git+https://github.com/angelsen/peek-tool.git
+```
+
+### Development Setup
 
 ```bash
 # Clone the repository
 git clone https://github.com/angelsen/peek-tool.git
 cd peek-tool
 
-# Install the package
+# Install dependencies
 uv sync
+
+# Install in development mode
+uv add --dev --editable .
 ```
 
-## Basic Usage
+## 🔮 MCP Integration
 
-### Command Line Interface
+Peek can supercharge your AI coding workflows by connecting to leading AI tools through MCP (Model Context Protocol).
 
-#### Inspect a Module
+### Starting the MCP Server
 
 ```bash
-peek json
+# Start the MCP server
+uv run peek-mcp
+
+# With custom options
+uv run peek-mcp --name "My Peek Server" --transport sse
 ```
 
-This shows the module's docstring, functions, classes, and imported items with a clean, hierarchical view.
+### With Claude Desktop
 
-#### Inspect a Specific Class
+Add to your Claude Desktop config:
+
+1. Install [Claude Desktop](https://claude.ai/download) if you haven't already
+2. Open the Claude menu and select "Settings..."
+3. Click on "Developer" in the left sidebar, then click "Edit Config"
+4. Add the Peek server to your configuration:
+
+```json
+{
+  "mcpServers": {
+    "peek": {
+      "command": "uv",
+      "args": ["run", "peek-mcp"],
+      "env": {}
+    }
+  }
+}
+```
+
+5. Save the file and restart Claude Desktop
+
+### With Claude Code
 
 ```bash
-peek json.JSONEncoder
+# Add Peek MCP server to current project (local scope)
+claude mcp add peek -- uv run peek-mcp
+
+# Or add it globally (available in all projects)
+claude mcp add peek -s user -- uv run peek-mcp
+
+# List configured MCP servers
+claude mcp list
 ```
 
-This shows the class's methods with their signatures (parameters and return types).
+### With Cursor
 
-#### Inspect a Specific Method
+1. For project-specific configuration, create a `.cursor/mcp.json` file in your project directory
+2. For global configuration, create a `~/.cursor/mcp.json` file in your home directory
+3. Add the following configuration:
 
-```bash
-peek json.JSONEncoder.encode
+```json
+{
+  "mcpServers": {
+    "peek": {
+      "command": "uv",
+      "args": ["run", "peek-mcp"],
+      "env": {}
+    }
+  }
+}
 ```
 
-This shows detailed information about the method, including its full signature and docstring.
+4. Restart Cursor, and Peek will be available to use from the AI assistant
 
-### MCP Server
-
-Peek can also be run as an MCP (Model Context Protocol) server, exposing its functionality to LLM agents and other MCP clients.
-
-#### Start the MCP server
-
-```bash
-peek-mcp
-```
-
-This starts an MCP server that exposes peek functionality as tools and resources that LLM agents can use.
-
-#### Using with Claude and other MCP clients
-
-The MCP server exposes:
-
-1. `inspect_module` tool: Lets the LLM inspect any Python module
-2. Help resources explaining how to use peek
-3. `inspect` prompt template: Creates a prompt to inspect a specific module, class, or function
-
-To connect:
-1. Start the peek-mcp server: `peek-mcp`
-2. Add it as a connection in Claude Desktop or any MCP client
-3. The LLM can now use peek to inspect Python modules
-
-Advanced options:
-```bash
-# Run with a custom name
-peek-mcp --name "My Peek Server"
-
-# Run with SSE transport for web applications
-peek-mcp --transport sse
-```
-
-## Project Structure
+## 🛠️ Project Structure
 
 ```
 peek-tool/
 ├── src/
 │   └── peek_tool/
 │       ├── __init__.py        # Package exports
-│       ├── core/              # Core inspection functionality
+│       ├── core/              # Core inspection functionality 
 │       │   ├── base.py        # Abstract base classes
 │       │   └── python_inspector.py # Python module inspection
 │       ├── formatters/        # Output formatters
@@ -117,28 +187,10 @@ peek-tool/
 └── README.md
 ```
 
-## Development
+## 🗺️ Roadmap
 
-### Prerequisites
-
-- Python 3.11+
-- UV for package management
-
-### Setup
-
-```bash
-# Clone the repository
-git clone https://github.com/angelsen/peek-tool.git
-cd peek-tool
-
-# Install development dependencies
-uv sync
-```
-
-## Future Features
-
-- Support for OpenAPI (Swagger) inspection
-- Additional output formats (JSON, Markdown)
+- Enhanced OpenAPI (Swagger) inspection
+- Additional output formats (Markdown)
 - Filtering options (e.g., `--no-private` to hide private methods)
 - Depth control for adjusting verbosity level
 - Interactive navigation mode
@@ -146,37 +198,6 @@ uv sync
 - Enhanced MCP integration with additional tools and resources
 - Web UI for browsing inspection results
 
-## Examples
-
-### Inspecting Standard Library Modules
-
-```bash
-# View json module overview
-peek json
-
-# View details of the dumps function
-peek json.dumps
-
-# View the JSONEncoder class
-peek json.JSONEncoder
-```
-
-### Inspecting Complex Third-Party Libraries
-
-```bash
-# Get an overview of a third-party package
-peek requests
-
-# View a specific submodule
-peek requests.models
-
-# Examine a specific class
-peek requests.Session
-
-# View details of a specific method
-peek requests.Session.get
-```
-
-## License
+## 📜 License
 
 MIT License

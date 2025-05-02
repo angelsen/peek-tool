@@ -5,7 +5,7 @@ from typing import get_type_hints
 
 from peek_tool.core.base import Inspector, InspectorFactory
 from peek_tool.models.inspection_result import InspectionResult
-from peek_tool.models.api_element import Module, Class, Method, Parameter
+from peek_tool.models.python_element import Module, Class, Method, Parameter
 
 
 class PythonInspector(Inspector):
