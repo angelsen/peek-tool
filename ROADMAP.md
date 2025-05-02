@@ -2,10 +2,6 @@
 
 ## Active Development
 
-- [ ] Add JSON formatter
-- [ ] Add Markdown formatter
-- [ ] Implement OpenAPI/Swagger inspector
-
 ## Completed
 
 - [x] Create initial project structure

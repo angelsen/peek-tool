@@ -5,62 +5,7 @@ import os
 import sys
 from pathlib import Path
 
-
-def register_arguments(parser):
-    """Register arguments for the MCP commands."""
-    subparsers = parser.add_subparsers(
-        dest="mcp_command", help="MCP command to execute"
-    )
-
-    # Add server command
-    server_parser = subparsers.add_parser("server", help="Start the MCP server")
-    server_parser.add_argument(
-        "--name", default="Peek", help="The name of the server (default: 'Peek')"
-    )
-    server_parser.add_argument(
-        "--transport",
-        choices=["stdio", "sse"],
-        default="stdio",
-        help="Transport protocol to use (default: stdio)",
-    )
-
-    # Add init command for Cursor integration
-    init_parser = subparsers.add_parser("init", help="Initialize MCP configuration")
-    init_parser.add_argument(
-        "--target",
-        choices=["cursor", "claude"],
-        required=True,
-        help="Target integration platform",
-    )
-    init_parser.add_argument(
-        "--scope",
-        choices=["project", "global"],
-        default="project",
-        help="Configuration scope (project or global)",
-    )
-    init_parser.add_argument(
-        "--name", default="peek", help="Name for the MCP server configuration"
-    )
-    init_parser.add_argument(
-        "--package-manager",
-        choices=["uv", "pip"],
-        default="uv",
-        help="Package manager to use (default: uv)",
-    )
-
-
-def execute(args):
-    """Execute the MCP command."""
-    if args.mcp_command == "server":
-        return execute_server(args)
-    elif args.mcp_command == "init":
-        return execute_init(args)
-    else:
-        print(
-            "Please specify an MCP command. Use --help for more information.",
-            file=sys.stderr,
-        )
-        return 1
+import typer
 
 
 def execute_server(args):
@@ -76,24 +21,98 @@ def execute_server(args):
         mcp_server_main(mcp_args)
         return 0
     except Exception as e:
-        print(f"Error starting MCP server: {str(e)}", file=sys.stderr)
+        typer.secho(
+            f"Error starting MCP server: {str(e)}", fg=typer.colors.RED, err=True
+        )
         return 1
 
 
 def execute_init(args):
     """Execute the MCP initialization command."""
     try:
+        # Check if we should run in interactive mode (default) or with provided arguments
+        if not hasattr(args, "interactive") or args.interactive:
+            return interactive_init()
+
+        # Non-interactive mode with direct arguments
         if args.target == "cursor":
             return init_cursor_config(args)
         elif args.target == "claude":
-            print("Claude initialization not yet implemented.")
-            return 1
+            return init_claude_config(args)
         else:
-            print(f"Unsupported target: {args.target}", file=sys.stderr)
+            typer.secho(
+                f"Unsupported target: {args.target}", fg=typer.colors.RED, err=True
+            )
             return 1
     except Exception as e:
-        print(f"Error initializing MCP configuration: {str(e)}", file=sys.stderr)
+        typer.secho(
+            f"Error initializing MCP configuration: {str(e)}",
+            fg=typer.colors.RED,
+            err=True,
+        )
         return 1
+
+
+def interactive_init():
+    """Interactive MCP initialization using Typer prompts."""
+    typer.secho("Peek MCP Configuration Wizard", fg=typer.colors.BRIGHT_BLUE, bold=True)
+    typer.secho("=============================", fg=typer.colors.BRIGHT_BLUE)
+
+    # Target platform selection
+    targets = ["cursor", "claude", "custom"]
+    target_descriptions = ["Cursor IDE", "Claude Desktop", "Custom setup"]
+
+    for i, (target, desc) in enumerate(zip(targets, target_descriptions), 1):
+        typer.echo(f"{i}. {desc}")
+
+    target_index = typer.prompt("Select integration platform", type=int, default=1) - 1
+    target = targets[target_index] if 0 <= target_index < len(targets) else "cursor"
+
+    # Scope selection
+    scopes = ["project", "global"]
+    scope_descriptions = [
+        "Project (local to this project)",
+        "Global (available in all projects)",
+    ]
+
+    typer.echo("")  # Empty line for better spacing
+    for i, (scope, desc) in enumerate(zip(scopes, scope_descriptions), 1):
+        typer.echo(f"{i}. {desc}")
+
+    scope_index = typer.prompt("Select configuration scope", type=int, default=1) - 1
+    scope = scopes[scope_index] if 0 <= scope_index < len(scopes) else "project"
+
+    # Configuration name
+    name = typer.prompt("Enter a name for this configuration", default="peek")
+
+    # Package manager
+    pms = ["uv", "pip"]
+    pm_descriptions = ["uv (recommended)", "pip"]
+
+    typer.echo("")  # Empty line for better spacing
+    for i, (pm, desc) in enumerate(zip(pms, pm_descriptions), 1):
+        typer.echo(f"{i}. {desc}")
+
+    pm_index = typer.prompt("Select package manager", type=int, default=1) - 1
+    package_manager = pms[pm_index] if 0 <= pm_index < len(pms) else "uv"
+
+    # Create args object for specific initializers
+    class Args:
+        pass
+
+    args = Args()
+    args.target = target
+    args.scope = scope
+    args.name = name
+    args.package_manager = package_manager
+
+    # Call the appropriate initializer
+    if target == "cursor":
+        return init_cursor_config(args)
+    elif target == "claude":
+        return init_claude_config(args)
+    else:
+        return init_custom_config(args)
 
 
 def init_cursor_config(args):
@@ -129,9 +148,10 @@ def init_cursor_config(args):
                 if "mcpServers" not in config:
                     config["mcpServers"] = {}
         except json.JSONDecodeError:
-            print(
+            typer.secho(
                 f"Warning: Existing config file {config_file} is not valid JSON. Creating new file.",
-                file=sys.stderr,
+                fg=typer.colors.YELLOW,
+                err=True,
             )
 
     # Add or update server configuration
@@ -141,8 +161,149 @@ def init_cursor_config(args):
     with open(config_file, "w") as f:
         json.dump(config, f, indent=2)
 
-    print(f"Cursor MCP configuration created at: {config_file}")
-    print(
+    typer.secho("\n✓ Success!", fg=typer.colors.GREEN, bold=True)
+    typer.echo(f"Cursor MCP configuration created at: {config_file}")
+    typer.echo(
         f"Server '{args.name}' configured with {args.package_manager} as package manager"
     )
+
+    # Instructions for Cursor usage
+    typer.secho("\nUsage Instructions:", fg=typer.colors.BLUE, bold=True)
+    typer.echo("1. Open Cursor AI")
+    typer.echo("2. Type a command that can use the Peek tool")
+    typer.echo("3. If asked, approve the tool usage")
+
+    return 0
+
+
+def init_claude_config(args):
+    """Initialize Claude MCP configuration."""
+    # Determine paths based on OS
+    if sys.platform == "darwin":  # macOS
+        config_dir = Path.home() / "Library" / "Application Support" / "Claude"
+        config_file = config_dir / "claude_desktop_config.json"
+    elif sys.platform == "win32":  # Windows
+        appdata = Path(os.environ.get("APPDATA", ""))
+        config_dir = appdata / "Claude"
+        config_file = config_dir / "claude_desktop_config.json"
+    else:  # Linux and others
+        config_dir = Path.home() / ".config" / "Claude"
+        config_file = config_dir / "claude_desktop_config.json"
+
+    # Create config directory if it doesn't exist
+    os.makedirs(config_dir, exist_ok=True)
+
+    # Determine command based on package manager
+    if args.package_manager == "uv":
+        command = "uv"
+        command_args = ["run", "peek-mcp"]
+    else:  # pip
+        command = "python"
+        command_args = ["-m", "peek_tool.mcp_server"]
+
+    # Load existing config or create new
+    config = {"mcpServers": {}}
+    if config_file.exists():
+        try:
+            with open(config_file, "r") as f:
+                config = json.load(f)
+                if "mcpServers" not in config:
+                    config["mcpServers"] = {}
+        except json.JSONDecodeError:
+            typer.secho(
+                f"Warning: Existing config file {config_file} is not valid JSON. Creating new file.",
+                fg=typer.colors.YELLOW,
+                err=True,
+            )
+
+    # Add or update server configuration
+    config["mcpServers"][args.name] = {
+        "command": command,
+        "args": command_args,
+        "env": {},
+    }
+
+    # Write configuration
+    with open(config_file, "w") as f:
+        json.dump(config, f, indent=2)
+
+    typer.secho("\n✓ Success!", fg=typer.colors.GREEN, bold=True)
+    typer.echo(f"Claude MCP configuration created at: {config_file}")
+    typer.echo(
+        f"Server '{args.name}' configured with {args.package_manager} as package manager"
+    )
+
+    # Instructions for Claude usage
+    typer.secho("\nUsage Instructions:", fg=typer.colors.BLUE, bold=True)
+    typer.echo("1. Restart Claude Desktop if it's running")
+    typer.echo("2. Look for the hammer icon in the message input area")
+    typer.echo("3. Click the hammer to view available tools")
+    typer.echo("4. Ask Claude to use the Peek tool")
+
+    return 0
+
+
+def init_custom_config(args):
+    """Initialize custom MCP configuration."""
+    typer.secho("\nCustom MCP Configuration", fg=typer.colors.BRIGHT_BLUE, bold=True)
+    typer.secho("---------------------", fg=typer.colors.BRIGHT_BLUE)
+
+    # Get configuration file path
+    default_path = str(
+        Path(".mcp.json") if args.scope == "project" else Path.home() / ".mcp.json"
+    )
+    file_path = typer.prompt("Configuration file path", default=default_path)
+    config_file = Path(file_path)
+
+    # Get custom command
+    command = typer.prompt("Command to run the MCP server")
+
+    # Get command arguments
+    args_str = typer.prompt("Command arguments (space-separated)", default="")
+    command_args = args_str.split() if args_str else []
+
+    # Environment variables
+    env_vars = {}
+    add_env = typer.confirm("Add environment variables?", default=False)
+
+    while add_env:
+        env_key = typer.prompt("Environment variable name")
+        env_val = typer.prompt(f"Value for {env_key}")
+        env_vars[env_key] = env_val
+
+        add_env = typer.confirm("Add another environment variable?", default=False)
+
+    # Load existing config or create new
+    config = {"mcpServers": {}}
+    if config_file.exists():
+        try:
+            with open(config_file, "r") as f:
+                config = json.load(f)
+                if "mcpServers" not in config:
+                    config["mcpServers"] = {}
+        except json.JSONDecodeError:
+            typer.secho(
+                f"Warning: Existing config file {config_file} is not valid JSON. Creating new file.",
+                fg=typer.colors.YELLOW,
+                err=True,
+            )
+
+    # Add or update server configuration
+    config["mcpServers"][args.name] = {
+        "command": command,
+        "args": command_args,
+        "env": env_vars,
+    }
+
+    # Ensure directory exists
+    os.makedirs(config_file.parent, exist_ok=True)
+
+    # Write configuration
+    with open(config_file, "w") as f:
+        json.dump(config, f, indent=2)
+
+    typer.secho("\n✓ Success!", fg=typer.colors.GREEN, bold=True)
+    typer.echo(f"Custom MCP configuration created at: {config_file}")
+    typer.echo(f"Server '{args.name}' configured with custom settings")
+
     return 0

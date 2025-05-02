@@ -1,7 +1,8 @@
 """Inspect command for the peek CLI."""
 
-import sys
 from pathlib import Path
+
+import typer
 
 from peek_tool.core.base import InspectorFactory
 from peek_tool.formatters.base import FormatterFactory
@@ -32,27 +33,6 @@ def get_default_format(target_type: str) -> str:
     return format_mapping.get(target_type, "text")
 
 
-def register_arguments(parser):
-    """Register the arguments for the inspect command."""
-    parser.add_argument(
-        "target", help="Target to inspect (e.g., Python module, class, or file path)"
-    )
-
-    parser.add_argument(
-        "--type",
-        "-t",
-        choices=["python", "json"],  # Add more as implemented
-        help="Type of target to inspect (auto-detected if not specified)",
-    )
-
-    parser.add_argument(
-        "--format",
-        "-f",
-        choices=["text", "json-text"],  # Add more as implemented
-        help="Output format (auto-selected based on target if not specified)",
-    )
-
-
 def execute(args):
     """Execute the inspect command."""
     try:
@@ -71,9 +51,10 @@ def execute(args):
 
         # Check if the inspector supports the target
         if not inspector.supports(args.target):
-            print(
+            typer.secho(
                 f"Error: Target '{args.target}' is not supported by the {target_type} inspector",
-                file=sys.stderr,
+                fg=typer.colors.RED,
+                err=True,
             )
             return 1
 
@@ -84,10 +65,10 @@ def execute(args):
         formatter = FormatterFactory.create_formatter(format_type)
         output = formatter.format(result)
 
-        # Print the output
-        print(output)
+        # Print the output using typer
+        typer.echo(output)
         return 0
 
     except Exception as e:
-        print(f"Error: {str(e)}", file=sys.stderr)
+        typer.secho(f"Error: {str(e)}", fg=typer.colors.RED, err=True)
         return 1

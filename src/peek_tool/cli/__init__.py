@@ -3,6 +3,6 @@
 This package provides the command-line interface for peek-tool.
 """
 
-from peek_tool.cli.main import main, app
+from peek_tool.cli.main import app
 
-__all__ = ["main", "app"]
+__all__ = ["app"]

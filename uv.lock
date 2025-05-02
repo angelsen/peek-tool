@@ -1019,6 +1019,7 @@ source = { editable = "." }
 dependencies = [
     { name = "chromadb" },
     { name = "mcp", extra = ["cli"] },
+    { name = "typer" },
 ]
 
 [package.dev-dependencies]
@@ -1031,6 +1032,7 @@ dev = [
 requires-dist = [
     { name = "chromadb", specifier = ">=1.0.7" },
     { name = "mcp", extras = ["cli"], specifier = ">=1.6.0" },
+    { name = "typer", specifier = ">=0.15.3" },
 ]
 
 [package.metadata.requires-dev]
