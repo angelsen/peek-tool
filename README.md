@@ -6,8 +6,6 @@
   [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 </div>
 
----
-
 ## ✨ Why Peek?
 
 Navigating complex Python libraries shouldn't be painful. **Peek** is a developer tool for API discovery that helps you:
@@ -77,6 +75,9 @@ uv run peek path/to/your/file.json:path.to.element
 ```bash
 # Install as a development dependency
 uv add --dev git+https://github.com/angelsen/peek-tool.git
+
+# Update to the latest version
+uv add --dev git+https://github.com/angelsen/peek-tool.git --upgrade-package peek-tool
 ```
 
 ### Development Setup
