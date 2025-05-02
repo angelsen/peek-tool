@@ -10,7 +10,8 @@ def register_prompts(app: FastMCP) -> None:
     """Register all peek prompts with the FastMCP server."""
 
     @app.prompt(
-        name="inspect", description="Inspect a Python module, class, function, or JSON file"
+        name="inspect",
+        description="Inspect a Python module, class, function, or JSON file",
     )
     def module_inspect_prompt(target: str, target_type: str = "module") -> str:
         """

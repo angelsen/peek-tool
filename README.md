@@ -25,6 +25,9 @@ uv add --dev git+https://github.com/angelsen/peek-tool.git
 
 # Start exploring any Python module
 uv run peek requests
+
+# Quick setup with Cursor
+uv run peek mcpinit
 ```
 
 Connect with your favorite AI tools:
@@ -142,6 +145,15 @@ claude mcp list
 
 ### With Cursor
 
+**Quick Setup (Recommended)**:
+```bash
+# Set up Peek MCP for the current project
+uv run peek mcpinit
+```
+
+This creates a `.cursor/mcp.json` file in your project directory with the proper configuration.
+
+**Manual Setup**:
 1. For project-specific configuration, create a `.cursor/mcp.json` file in your project directory
 2. For global configuration, create a `~/.cursor/mcp.json` file in your home directory
 3. Add the following configuration:

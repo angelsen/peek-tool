@@ -20,6 +20,7 @@ CLAUDE.md
 resources/
 
 # Local config
+.cursor/
 
 # Logs
 .logs/
