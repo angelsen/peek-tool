@@ -4,13 +4,13 @@ This package provides an MCP server that exposes peek functionality
 through the Model Context Protocol, allowing LLMs to inspect Python modules.
 """
 
-from peek_tool.mcp_server.app import app
+from peek_tool.mcp_server.app import mcp
 
-# Import tools and resources to register them with the app
+# Import tools and resources to register them with the mcp server
 import peek_tool.mcp_server.tools  # noqa: F401
 import peek_tool.mcp_server.resources  # noqa: F401
 
-__all__ = ["app"]
+__all__ = ["mcp"]
 
 
 def main():
@@ -27,7 +27,7 @@ def main():
     )
 
     args = parser.parse_args()
-    app.run(transport=args.transport)
+    mcp.run(transport=args.transport)
 
 
 # Make the module callable for the entry point

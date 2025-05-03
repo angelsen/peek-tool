@@ -2,7 +2,7 @@
 
 import typer
 
-from peek_tool.mcp_server import app as mcp_app
+from peek_tool.mcp_server import mcp
 
 
 def server_command(
@@ -13,7 +13,7 @@ def server_command(
     """Start the MCP server for integration."""
     try:
         # Run the MCP server with specified options
-        mcp_app.run(transport=transport)
+        mcp.run(transport=transport)
     except Exception as e:
         typer.secho(
             f"Error starting MCP server: {str(e)}", fg=typer.colors.RED, err=True

@@ -11,7 +11,7 @@ from mcp.server.fastmcp import Context
 
 from peek_tool.core.base import InspectorFactory
 from peek_tool.formatters.base import FormatterFactory
-from peek_tool.mcp_server.app import app
+from peek_tool.mcp_server.app import mcp
 
 
 def auto_detect_type(target: str) -> str:
@@ -39,7 +39,7 @@ def get_default_format(target_type: str) -> str:
     return format_mapping.get(target_type, "text")
 
 
-@app.tool()
+@mcp.tool()
 def inspect_module(
     target: Annotated[
         str,
