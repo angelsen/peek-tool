@@ -6,7 +6,7 @@ through the Model Context Protocol, allowing LLMs to inspect Python modules.
 
 from mcp.server.fastmcp import FastMCP
 
-mcp = FastMCP(
+server = FastMCP(
     name="Peek",
     description="Inspect and explore code and data structures",
     instructions="Inspect Python modules, classes, methods, functions, and JSON files to understand their structure.",
@@ -16,7 +16,7 @@ import peek_tool.mcp_server.tools  # noqa: F401, E402
 import peek_tool.mcp_server.resources  # noqa: F401, E402
 import peek_tool.mcp_server.prompts  # noqa: F401, E402
 
-__all__ = ["mcp"]
+__all__ = ["server"]
 
 
 def main():
@@ -33,7 +33,7 @@ def main():
     )
 
     args = parser.parse_args()
-    mcp.run(transport=args.transport)
+    server.run(transport=args.transport)
 
 
 # Make the module callable for the entry point
