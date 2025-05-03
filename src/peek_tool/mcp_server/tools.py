@@ -9,7 +9,7 @@ from pydantic import Field
 from mcp.server.fastmcp import Context
 
 from peek_tool.core.base import InspectorFactory
-from peek_tool.mcp_server.app import mcp
+from peek_tool.mcp_server import mcp
 
 
 @mcp.tool()

@@ -6,7 +6,7 @@ This module contains the prompt definitions used by the peek MCP server.
 from typing import Annotated
 from pydantic import Field
 
-from peek_tool.mcp_server.app import mcp
+from peek_tool.mcp_server import mcp
 
 
 @mcp.prompt("module-inspect")

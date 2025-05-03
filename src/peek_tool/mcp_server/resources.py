@@ -3,7 +3,7 @@
 This module contains the resource definitions used by the peek MCP server.
 """
 
-from peek_tool.mcp_server.app import mcp
+from peek_tool.mcp_server import mcp
 
 
 @mcp.resource("mcp://peek/help")
