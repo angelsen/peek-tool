@@ -3,20 +3,17 @@
 This module contains the resource definitions used by the peek MCP server.
 """
 
-from mcp.server.fastmcp.server import FastMCP
+from peek_tool.mcp_server.app import app
 
 
-def register_resources(app: FastMCP) -> None:
-    """Register all peek resources with the FastMCP server."""
+@app.resource("mcp://peek/help")
+def help_resource() -> str:
+    """Documentation for using peek.
 
-    @app.resource(
-        uri="mcp://peek/help",
-        name="Peek Help",
-        description="Documentation for using peek",
-    )
-    def help_resource() -> str:
-        """Return help documentation for peek."""
-        return """# Peek-Tool
+    Provides helpful information about how to use the peek tool
+    and its capabilities for inspecting Python modules and JSON files.
+    """
+    return """# Peek-Tool
 
 Peek is a tool for inspecting Python modules and JSON files.
 

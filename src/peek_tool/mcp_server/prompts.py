@@ -3,22 +3,27 @@
 This module contains the prompt definitions used by the peek MCP server.
 """
 
-from mcp.server.fastmcp.server import FastMCP
+from typing import Annotated
+from pydantic import Field
+
+from peek_tool.mcp_server.app import app
 
 
-def register_prompts(app: FastMCP) -> None:
-    """Register all peek prompts with the FastMCP server."""
+@app.prompt()
+def module_inspect_prompt(
+    target: Annotated[
+        str,
+        Field(
+            description="The name of the module, class, function, or path to JSON file to inspect"
+        ),
+    ],
+    target_type: Annotated[
+        str, Field(description="Type of target (module, class, function, method, json)")
+    ] = "module",
+) -> str:
+    """Inspect a Python module, class, function, or JSON file.
 
-    @app.prompt(
-        name="inspect",
-        description="Inspect a Python module, class, function, or JSON file",
-    )
-    def module_inspect_prompt(target: str, target_type: str = "module") -> str:
-        """
-        Create a prompt to inspect a Python module, class, function, or JSON file.
-
-        Args:
-            target: The name of the module, class, function, or path to JSON file to inspect
-            target_type: Type of target (module, class, function, method, json)
-        """
-        return f"Please inspect the Python {target_type} named '{target}' and explain its key functionality, parameters, and usage patterns."
+    Creates a prompt that guides the LLM to explore and explain the key
+    functionality, parameters, and usage patterns of the specified target.
+    """
+    return f"Please inspect the Python {target_type} named '{target}' and explain its key functionality, parameters, and usage patterns."

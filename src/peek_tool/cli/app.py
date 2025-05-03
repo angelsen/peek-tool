@@ -1,8 +1,12 @@
-"""Main CLI entry point for peek-tool."""
+"""CLI app instance for peek-tool.
+
+This module contains the Typer application instance used across the CLI components.
+"""
 
 import typer
 from typing import Optional
 
+# Import command groups and commands
 from peek_tool.cli.commands.mcp import app as mcp_app
 from peek_tool.cli.commands.inspect.command import inspect_command
 
@@ -11,14 +15,14 @@ app = typer.Typer(
     no_args_is_help=True,
 )
 
-# Add MCP command group
+# Register command groups
 app.add_typer(mcp_app, name="mcp")
 
-# Register inspect command directly on the main app
+# Register direct commands
 app.command("inspect")(inspect_command)
 
 
-# Default command as shorthand for inspect
+# Default callback to show help when no command is provided
 @app.callback(invoke_without_command=True)
 def main(ctx: typer.Context):
     """Peek tool for inspecting Python modules and JSON files."""

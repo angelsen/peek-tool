@@ -10,6 +10,6 @@ __version__ = "0.1.0"
 from peek_tool.core.python_inspector import PythonInspector
 from peek_tool.formatters.python.text import TextFormatter
 from peek_tool.models.inspection_result import InspectionResult
-from peek_tool.cli import main, app
+from peek_tool.cli.app import app
 
-__all__ = ["PythonInspector", "TextFormatter", "InspectionResult", "main", "app"]
+__all__ = ["PythonInspector", "TextFormatter", "InspectionResult", "app"]

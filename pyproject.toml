@@ -10,7 +10,7 @@ dependencies = ["chromadb>=1.0.7", "mcp[cli]>=1.6.0", "typer>=0.15.3"]
 
 [project.scripts]
 peek = "peek_tool.cli:app"
-peek-mcp = "peek_tool.mcp_server.__main__:main"
+peek-mcp = "peek_tool.mcp_server:main"
 
 [build-system]
 requires = ["hatchling"]
