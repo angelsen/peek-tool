@@ -251,4 +251,4 @@ class PythonInspector(Inspector):
 
 
 # Register the inspector with its formatter
-InspectorFactory.register("python", PythonInspector, formatter_type="text")
+InspectorFactory.register("python", PythonInspector, formatter_type="python-text")

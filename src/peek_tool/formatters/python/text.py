@@ -173,4 +173,4 @@ class TextFormatter(PythonFormatter):
 
 
 # Register the formatter
-FormatterFactory.register("text", TextFormatter)
+FormatterFactory.register("python-text", TextFormatter)

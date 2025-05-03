@@ -26,7 +26,7 @@ class InspectorFactory:
 
     # Map inspector types to their formatter types
     _formatter_mappings: Dict[str, str] = {
-        "python": "text",
+        "python": "python-text",
         "json": "json-text",
         # Add more mappings as needed
     }
