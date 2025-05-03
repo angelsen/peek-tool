@@ -30,18 +30,16 @@ inspect_module(target="json.JSONEncoder.encode")  # Inspect a method
 
 ## Inspect a JSON File
 
-Use the `inspect_module` tool with a JSON file path and inspector_type="json":
+Use the `inspect_module` tool with a JSON file path:
 
 ```python
-inspect_module(target="/path/to/file.json", inspector_type="json")  # Inspect a JSON file
-inspect_module(target="/path/to/file.json:path.to.element", inspector_type="json")  # Inspect a specific element
+inspect_module(target="/path/to/file.json")  # Inspect a JSON file
+inspect_module(target="/path/to/file.json:path.to.element")  # Inspect a specific element
 ```
 
 ## Parameters
 
 - `target`: The Python module, class, function, method, or JSON file path to inspect
-- `inspector_type`: Type of inspector to use ("python" or "json", default: "python")
-- `output_format`: Output format ("text", "json-text", default: "text")
 
 ## Examples
 

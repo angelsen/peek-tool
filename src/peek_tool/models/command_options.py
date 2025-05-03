@@ -9,8 +9,6 @@ class InspectOptions:
     """Options for the inspect command."""
 
     target: str
-    type: Optional[str] = None
-    format: Optional[str] = None
 
 
 @dataclass(frozen=True)

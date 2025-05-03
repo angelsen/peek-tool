@@ -4,11 +4,17 @@ This package provides an MCP server that exposes peek functionality
 through the Model Context Protocol, allowing LLMs to inspect Python modules.
 """
 
-from peek_tool.mcp_server.app import mcp
+from mcp.server.fastmcp import FastMCP
 
-# Import tools and resources to register them with the mcp server
-import peek_tool.mcp_server.tools  # noqa: F401
-import peek_tool.mcp_server.resources  # noqa: F401
+mcp = FastMCP(
+    name="Peek",
+    description="Inspect and explore code and data structures",
+    instructions="Inspect Python modules, classes, methods, functions, and JSON files to understand their structure.",
+)
+
+import peek_tool.mcp_server.tools  # noqa: F401, E402
+import peek_tool.mcp_server.resources  # noqa: F401, E402
+import peek_tool.mcp_server.prompts  # noqa: F401, E402
 
 __all__ = ["mcp"]
 

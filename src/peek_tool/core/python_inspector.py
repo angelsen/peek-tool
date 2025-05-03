@@ -250,5 +250,5 @@ class PythonInspector(Inspector):
         return str(type_obj)
 
 
-# Register the inspector
-InspectorFactory.register("python", PythonInspector)
+# Register the inspector with its formatter
+InspectorFactory.register("python", PythonInspector, formatter_type="text")

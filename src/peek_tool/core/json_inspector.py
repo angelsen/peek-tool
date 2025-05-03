@@ -121,5 +121,5 @@ class JsonInspector(Inspector):
         return JsonElement(name=name, value_type=type(data).__name__, value=str(data))
 
 
-# Register the inspector
-InspectorFactory.register("json", JsonInspector)
+# Register the inspector with its formatter
+InspectorFactory.register("json", JsonInspector, formatter_type="json-text")
