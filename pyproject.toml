@@ -7,16 +7,10 @@ requires-python = ">=3.11"
 license = { text = "MIT" }
 authors = [{ name = "Fredrik Angelsen", email = "fredrikangelsen@gmail.com" }]
 dependencies = [
-    "appdirs>=1.4.4",
-    "gitpython>=3.1.44",
     "jinja2>=3.1.6",
     "json5>=0.12.0",
     "mcp[cli]>=1.6.0",
     "pyyaml>=6.0.2",
-    "reflex>=0.7.9",
-    "ruamel-yaml>=0.18.10",
-    "sqlalchemy>=2.0.40",
-    "textual>=3.2.0",
     "toml>=0.10.2",
     "typer>=0.15.3",
 ]
